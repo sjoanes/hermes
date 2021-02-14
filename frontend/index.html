@@ -1,0 +1,28 @@
+<html>
+<head>
+</head>
+<body>
+<div id="game"></div>
+<ul id="showmepotatosalad"></ul>
+<input type="text" id="guess" />
+<script>
+let game = {}
+
+fetch('/polls/start/', { method: 'POST' })
+	.then(response => response.json())
+    .then(data => {
+		game = data
+	})
+
+document.querySelector('#guess').onkeypress = function(e) {
+    if (e.keyCode == 13) {
+        fetch('/polls/guess/', {
+			headers: { 'Content-Type': 'application/json' },
+			method: 'POST',
+			body: JSON.stringify({ response: "test", game: game.id, poll: game.current_poll.id  }),
+		})
+    }
+}
+</script>
+</body>
+</html>
