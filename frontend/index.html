@@ -52,7 +52,7 @@ document.querySelector('#guess').onkeypress = function(e) {
 				return
 			}
 
-			document.querySelector('#scoreboard').children[index].textContent = `${index + 1} [${data.points}] ${e.target.value}` 
+			document.querySelector('#scoreboard').children[index].textContent = `${index + 1} [${data.points}] ${guess}` 
             index += 1
 		})
     }

@@ -14,7 +14,9 @@ class GameSerializer(serializers.ModelSerializer):
     current_poll = PollSerializer(read_only=True)
 
     def create(self, validated_data):
-        poll = Poll.objects.create(description="What sports are taught in school?",)
+        poll = Poll.objects.all()[
+            0
+        ]  # .create(description="What sports are taught in school?",)
         return Game.objects.create(current_poll=poll,)
 
     class Meta:
