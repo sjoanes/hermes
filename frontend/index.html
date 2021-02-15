@@ -3,7 +3,17 @@
 </head>
 <body>
 <div id="game"></div>
-<ul id="showmepotatosalad"></ul>
+<ul id="scoreboard">
+<li>1. _________ </li>
+<li>2. _________ </li>
+<li>3. _________ </li>
+<li>4. _________ </li>
+<li>5. _________ </li>
+<li>6. _________ </li>
+<li>7. _________ </li>
+<li>8. _________ </li>
+</ul>
+<div id="error"></div>
 <input type="text" id="guess" />
 <script>
 let game = {}
@@ -12,14 +22,38 @@ fetch('/polls/start/', { method: 'POST' })
 	.then(response => response.json())
     .then(data => {
 		game = data
+		document.querySelector('#game').textContent = data.current_poll.description
 	})
 
+let index = 0
 document.querySelector('#guess').onkeypress = function(e) {
+    document.querySelector('#error').textContent = ''
     if (e.keyCode == 13) {
         fetch('/polls/guess/', {
 			headers: { 'Content-Type': 'application/json' },
 			method: 'POST',
-			body: JSON.stringify({ response: "test", game: game.id, poll: game.current_poll.id  }),
+			body: JSON.stringify({ response: e.target.value, game: game.id, poll: game.current_poll.id  }),
+		})
+		.then(response => response.json())
+		.then(data => {
+			const guess = e.target.value
+			document.querySelector('#guess').value = ''
+            if (data[0] === 'GAME OVER') {
+            	document.querySelector('#error').textContent = 'GAME OVER'
+				document.querySelector('#guess').remove()
+				return
+			}
+			if (data["non_field_errors"]) {
+            	document.querySelector('#error').textContent = 'You already guessed this!'
+				return
+			}
+			if (data.points === 0) {
+            	document.querySelector('#error').textContent = `${3 - data.attempts} attempts left`
+				return
+			}
+
+			document.querySelector('#scoreboard').children[index].textContent = `${index + 1} [${data.points}] ${e.target.value}` 
+            index += 1
 		})
     }
 }

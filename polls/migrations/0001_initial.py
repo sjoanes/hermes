@@ -9,38 +9,73 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Game',
+            name="Game",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('round', models.IntegerField(default=1)),
-                ('points', models.IntegerField(default=0)),
-                ('attempts', models.IntegerField(default=3)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("round", models.IntegerField(default=1)),
+                ("points", models.IntegerField(default=0)),
+                ("attempts", models.IntegerField(default=3)),
             ],
         ),
         migrations.CreateModel(
-            name='Poll',
+            name="Poll",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('description', models.TextField()),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("description", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='PollResponse',
+            name="PollResponse",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('response', models.TextField()),
-                ('game', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='polls.Game')),
-                ('poll', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='polls.Poll')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("response", models.TextField()),
+                (
+                    "game",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="polls.Game"
+                    ),
+                ),
+                (
+                    "poll",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="polls.Poll"
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='game',
-            name='current_poll',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='polls.Poll'),
+            model_name="game",
+            name="current_poll",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="polls.Poll"
+            ),
         ),
     ]
