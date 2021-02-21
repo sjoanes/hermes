@@ -25,7 +25,6 @@ fetch('/polls/start/', { method: 'POST' })
 		document.querySelector('#game').textContent = data.current_poll.description
 	})
 
-let index = 0
 document.querySelector('#guess').onkeypress = function(e) {
     document.querySelector('#error').textContent = ''
     if (e.keyCode == 13) {
@@ -47,13 +46,13 @@ document.querySelector('#guess').onkeypress = function(e) {
             	document.querySelector('#error').textContent = 'You already guessed this!'
 				return
 			}
-			if (data.points === 0) {
+			if (data.result.points === 0) {
             	document.querySelector('#error').textContent = `${3 - data.attempts} attempts left`
 				return
 			}
-
-			document.querySelector('#scoreboard').children[index].textContent = `${index + 1} [${data.points}] ${guess}` 
-            index += 1
+			const position = data.result.position
+    		const points  = data.result.points
+			document.querySelector('#scoreboard').children[position].textContent = `${position + 1} [${points}] ${guess}` 
 		})
     }
 }
