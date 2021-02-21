@@ -30,15 +30,12 @@ class GameSerializer(serializers.ModelSerializer):
         ]
 
 
-class LitGameSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Game
-        fields = ["attempts"]
-
-
 class PollResponseSerializer(serializers.ModelSerializer):
     points = serializers.SerializerMethodField()
     attempts = serializers.SerializerMethodField()
+
+    def validate_response(self, value):
+        return value.lower()
 
     def get_attempts(self, obj):
         return obj.game.attempts
