@@ -35,7 +35,6 @@ document.querySelector('#guess').onkeypress = function(e) {
 		})
 		.then(response => response.json())
 		.then(data => {
-			const guess = e.target.value
 			document.querySelector('#guess').value = ''
             if (data[0] === 'GAME OVER') {
             	document.querySelector('#error').textContent = 'GAME OVER'
@@ -50,9 +49,8 @@ document.querySelector('#guess').onkeypress = function(e) {
             	document.querySelector('#error').textContent = `${3 - data.attempts} attempts left`
 				return
 			}
-			const position = data.result.position
-    		const points  = data.result.points
-			document.querySelector('#scoreboard').children[position].textContent = `${position + 1} [${points}] ${guess}` 
+			const { position, points, response } = data.result
+			document.querySelector('#scoreboard').children[position].textContent = `${position + 1} [${points}] ${response}` 
 		})
     }
 }
