@@ -20,6 +20,7 @@
 		}
 
 		.content--area {
+			width: 320px;
 			box-shadow: 0 2px 10px 0 rgb(183 77 213);
 			border-radius: 5px;
 			background: linear-gradient(rgb(183 77 213), rgb(243 201 255));
@@ -83,6 +84,13 @@
 			border-radius: 5px;
 			margin: 10px;
 			outline: none;
+			text-transform: uppercase;
+    		text-align: center;
+		}
+
+		#error {
+			text-transform: uppercase;
+			text-align: center;
 		}
 	</style>
 </head>
@@ -90,7 +98,7 @@
 	<nav class="game--nav">HERMES</nav>
 	<div class="content--game">
 		<div class="content--area">
-			<div class="content--prompt" id="game"></div>
+			<div class="content--prompt" id="game">ʕ Σ ई လ</div>
 			<div id="scoreboard">
 				<div class="scoreboard--item"> 1  </div>
 				<div class="scoreboard--item"> 2  </div>
@@ -126,7 +134,7 @@ document.querySelector('#guess').onkeypress = function(e) {
 		.then(response => response.json())
 		.then(data => {
 			document.querySelector('#guess').value = ''
-            if (data[0] === 'GAME OVER') {
+            if (data["non_field_errors"] && data["non_field_errors"][0] === 'GAME OVER') {
             	document.querySelector('#error').textContent = 'GAME OVER'
 				document.querySelector('#guess').remove()
 				return

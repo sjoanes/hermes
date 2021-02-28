@@ -83,7 +83,7 @@ class PollResponseSerializer(serializers.ModelSerializer):
             current_resp = data["response"]
             if (
                 normalized_resp in current_resp
-                or (not exact_match and get_levenshtein_distance(normalized_resp, current_resp) < 3)
+                or (not exact_match and get_levenshtein_distance(normalized_resp, current_resp) < 1)
             ):
                 return {
                     "points": data["count"],
@@ -93,7 +93,7 @@ class PollResponseSerializer(serializers.ModelSerializer):
         game = Game.objects.get(id=obj.game.id)
         game.attempts += 1
         game.save()
-        if game.attempts > 2:
+        if game.attempts > 4:
             raise serializers.ValidationError("GAME OVER")
         return {"points": 0, "position": -1, "response": normalized_resp}
 
