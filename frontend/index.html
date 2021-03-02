@@ -141,6 +141,11 @@ function nextGame() {
 	document.querySelector('#guess').style.display = 'initial'
 	document.querySelector('#scoreboard').style.color = 'black'
 	document.querySelector('#nextgame').style.display = 'none'
+
+	const children = document.querySelector("#scoreboard").children
+	for (var j = 0; j < children.length; j++) {
+		children[j].textContent = `${j + 1}`
+	}
 }
 
 document.querySelector('#guess').onkeypress = function(e) {
