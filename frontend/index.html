@@ -258,6 +258,17 @@ document.querySelector('#guess').onkeypress = function(e) {
 			}
 			const { position, points, response } = data.result
 			document.querySelector('#scoreboard').children[position].textContent = `[${points}] ${response}` 
+
+			const scores = document.querySelector('#scoreboard').children 
+            for (var i = 0; i < scores.length; i++) {
+				if (document.querySelector('#scoreboard').children[i].textContent.trim() == i+1) {
+ 					return
+				}  
+            }
+            
+			document.querySelector('#guess').style.display = 'none'
+			document.querySelector('#nextgame').style.display = 'initial'
+			document.querySelector('#scoreboard').style.color = 'darkred:'
 		})
     }
 }
