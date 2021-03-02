@@ -94,6 +94,10 @@ class PollResponseSerializer(serializers.ModelSerializer):
         game.attempts += 1
         game.save()
         if game.attempts > 4:
+            return {
+                "response": "GAME OVER",
+				"answers": response_counts,
+            }
             raise serializers.ValidationError("GAME OVER")
         return {"points": 0, "position": -1, "response": normalized_resp}
 

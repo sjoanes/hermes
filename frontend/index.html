@@ -79,13 +79,21 @@
 			transition-timing-function: ease;
 		}
 
-		input {
-			background-color: #ff47a4;
+		input, button {
 			border-radius: 5px;
 			margin: 10px;
 			outline: none;
 			text-transform: uppercase;
     		text-align: center;
+			font-family: monospace;
+		}
+
+		input {
+			background-color: #ff47a4;
+		}
+
+		button {
+			background: linear-gradient(rgb(255 0 0), rgb(214 7 239));	
 		}
 
 		#error {
@@ -110,18 +118,30 @@
 				<div class="scoreboard--item"> 8 </div>
 			</div>
 			<div id="error"></div>
-			<input id="guess" autofocus/>
+			<input id="guess" autocomplete="off" autofocus/>
+			<button id="nextgame" onclick="nextGame()" style="display:none">NEXT GAME</button>
 		</div>
 	</div>
 <script>
 let game = {}
+const polls = [] 
 
-fetch('/polls/start/', { method: 'POST' })
-	.then(response => response.json())
-    .then(data => {
-		game = data
-		document.querySelector('#game').textContent = data.current_poll.description
-	})
+startGame()
+
+function startGame() {
+	fetch('/polls/start/', { method: 'POST' })
+		.then(response => response.json())
+		.then(data => {
+			game = data
+			document.querySelector('#game').textContent = data.current_poll.description
+		})
+}
+
+function nextGame() {
+	document.querySelector('#guess').style.display = 'initial'
+	document.querySelector('#scoreboard').style.color = 'black'
+	document.querySelector('#nextgame').style.display = 'none'
+}
 
 document.querySelector('#guess').onkeypress = function(e) {
     document.querySelector('#error').textContent = ''
@@ -134,13 +154,18 @@ document.querySelector('#guess').onkeypress = function(e) {
 		.then(response => response.json())
 		.then(data => {
 			document.querySelector('#guess').value = ''
-            if (data["non_field_errors"] && data["non_field_errors"][0] === 'GAME OVER') {
-            	document.querySelector('#error').textContent = 'GAME OVER'
-				document.querySelector('#guess').remove()
+            if (data["response"]  === 'GAME OVER' && !!data["result"]["answers"]) {
+				document.querySelector('#guess').style.display = 'none'
+				document.querySelector('#nextgame').style.display = 'initial'
+				document.querySelector('#scoreboard').style.color = 'darkred:'
+				for (var i = 0; i < data["result"]["answers"].length; i++) {
+					const { response, count } = data["result"]["answers"][i]
+					document.querySelector('#scoreboard').children[i].textContent = `[${count}] ${response}` 
+				}
 				return
 			}
 			if (data["non_field_errors"]) {
-            	document.querySelector('#error').textContent = 'You already guessed this!'
+            	document.querySelector('#error').textContent = 'psst, you already guessed that'
 				return
 			}
 			if (data.result.points === 0) {
@@ -153,10 +178,6 @@ document.querySelector('#guess').onkeypress = function(e) {
     }
 }
 </script>
-
-
-
-
 <script>
 const { PI, cos, sin, abs, sqrt, pow, round, random, atan2 } = Math;
 const HALF_PI = 0.5 * PI;
