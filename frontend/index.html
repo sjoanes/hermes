@@ -8,6 +8,9 @@
 			animation:pulse 1s infinite;
 		}
 
+		body {
+			zoom: 130%;
+		}
 
 		.pulsingheart { 
 		  position: relative; 
@@ -202,12 +205,10 @@ function startGame() {
 			game = data
 			document.querySelector('#game').textContent = data.current_poll.description
 		})
-	if (polls.length > 1) {
-		polls.shift()
-    }
 }
 
 function nextGame() {
+	polls.shift()
 	document.querySelector('#guess').style.display = 'initial'
 	document.querySelector('#scoreboard').style.color = 'black'
 	document.querySelector('#nextgame').style.display = 'none'
@@ -241,7 +242,7 @@ document.querySelector('#guess').onkeypress = function(e) {
 			}
             if (data.result.response  === 'GAME OVER' && !!data["result"]["answers"]) {
 				document.querySelector('#guess').style.display = 'none'
-				document.querySelector('#nextgame').style.display = 'initial'
+				document.querySelector('#nextgame').style.display = polls.length > 1 ? 'initial' : 'none'
 				document.querySelector('#scoreboard').style.color = 'darkred:'
 				for (var i = 0; i < data["result"]["answers"].length; i++) {
 					const { response, count } = data["result"]["answers"][i]
@@ -267,7 +268,7 @@ document.querySelector('#guess').onkeypress = function(e) {
             }
             
 			document.querySelector('#guess').style.display = 'none'
-			document.querySelector('#nextgame').style.display = 'initial'
+			document.querySelector('#nextgame').style.display = polls.length > 1 ? 'initial' : 'none'
 			document.querySelector('#scoreboard').style.color = 'darkred:'
 		})
     }
