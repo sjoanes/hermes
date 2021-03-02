@@ -1,6 +1,49 @@
 <html>
-<head>
+<head>	
 	<style>
+		#wrapper {
+		  position: absolute;
+		  margin-left: 50px;
+		  margin-top: 50px;
+			animation:pulse 1s infinite;
+		}
+
+
+		.pulsingheart { 
+		  position: relative; 
+		  width: 100px; 
+		  height: 90px;
+		  text-shadow: 2px 2px;
+		} 
+
+		.pulsingheart:before, .pulsingheart:after { 
+		  position: absolute; 
+		  content: ""; 
+		  left: 50px; 
+		  top: 0; 
+		  width: 50px; 
+		  height: 80px; 
+		  border-radius: 50px 50px 0 0; 
+		  transform: rotate(-45deg);  
+		  transform-origin: 0 100%;
+		  animation:pulsecolor 1s infinite;
+		} 
+
+		.pulsingheart:after { 
+		  left: 0; 
+		  transform: rotate(45deg); 
+		  transform-origin :100% 100%;
+		  animation:pulsecolor 1s infinite;
+		}
+
+		@keyframes pulse {
+			10% {transform: scale(1.1)}
+		}
+
+		@keyframes pulsecolor {
+		  10% {background: #dd0000}
+		}
+
 		.game--nav {
 			font-family: monospace;
     		font-size: 40px;
@@ -16,7 +59,14 @@
 			left: 0%;
     		width: 100%;
 			display: flex;
-			justify-content: center;
+    		align-items: center;
+    		flex-direction: column;		
+		}
+
+		#content-lives {
+			display: flex;
+	    	margin-top: 40px;
+    		flex-direction: row;
 		}
 
 		.content--area {
@@ -79,6 +129,11 @@
 			transition-timing-function: ease;
 		}
 
+		.content-lives {
+    		margin-left: 40px;
+	    	margin-top: 40px;
+		}
+
 		input, button {
 			border-radius: 5px;
 			margin: 10px;
@@ -121,6 +176,11 @@
 			<input id="guess" autocomplete="off" autofocus/>
 			<button id="nextgame" onclick="nextGame()" style="display:none">NEXT GAME</button>
 		</div>
+		<div id="content-lives">
+			<div class="pulsingheart"></div>
+			<div class="pulsingheart"></div>
+			<div class="pulsingheart"></div>
+		</div>
 	</div>
 <script>
 let game = {}
@@ -146,6 +206,12 @@ function nextGame() {
 	for (var j = 0; j < children.length; j++) {
 		children[j].textContent = `${j + 1}`
 	}
+
+    var lives = document.querySelector("#content-lives").children
+	for (var i = 0; i < lives.length; i++) {
+		lives[i].style.display = 'initial'
+	}
+	startGame()
 }
 
 document.querySelector('#guess').onkeypress = function(e) {
@@ -174,7 +240,10 @@ document.querySelector('#guess').onkeypress = function(e) {
 				return
 			}
 			if (data.result.points === 0) {
-            	document.querySelector('#error').textContent = `${3 - data.attempts} attempts left`
+            	var children = document.querySelector("#content-lives").children
+				for (var i = 0; i < data.attempts; i++) {
+					children[i].style.display = 'none'
+				}
 				return
 			}
 			const { position, points, response } = data.result

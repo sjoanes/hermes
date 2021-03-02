@@ -66,6 +66,8 @@ class PollResponseSerializer(serializers.ModelSerializer):
         return data
 
     def get_attempts(self, obj):
+        obj.game.attempts += 1
+        obj.game.save()
         return obj.game.attempts
 
     def get_result(self, obj):
@@ -91,9 +93,7 @@ class PollResponseSerializer(serializers.ModelSerializer):
                     "response": current_resp,
                 }
         game = Game.objects.get(id=obj.game.id)
-        game.attempts += 1
-        game.save()
-        if game.attempts > 4:
+        if game.attempts > 2:
             return {
                 "response": "GAME OVER",
 				"answers": response_counts,
