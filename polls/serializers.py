@@ -17,9 +17,10 @@ class GameSerializer(serializers.ModelSerializer):
     current_poll = PollSerializer(read_only=True)
 
     def create(self, validated_data):
-        poll = Poll.objects.all()[
-            0
-        ]  # .create(description="What sports are taught in school?",)
+        poll = Poll.objects.all()[1]
+        if self.context.get("poll_id"): 
+            poll = Poll.objects.get(id=self.context.get('poll_id'))
+        # poll = Poll.objects.create(description="What is Savio thinking about?")
         return Game.objects.create(current_poll=poll,)
 
     class Meta:
@@ -62,15 +63,13 @@ class PollResponseSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         pr = PollResponse(response=data["response"], game=data["game"], poll=data["poll"])
-        data["response"] = self.get_result(pr)["response"]
+        data["response"] = self.get_result(pr, side_effects=False)["response"]
         return data
 
     def get_attempts(self, obj):
-        obj.game.attempts += 1
-        obj.game.save()
         return obj.game.attempts
 
-    def get_result(self, obj):
+    def get_result(self, obj, side_effects=True):
         response_counts = (
             PollResponse.objects.filter(poll=obj.poll.id)
             .values("response")
@@ -79,6 +78,7 @@ class PollResponseSerializer(serializers.ModelSerializer):
             .order_by("-count")
         )[:8]
 
+        game = Game.objects.get(id=obj.game.id)
         normalized_resp = obj.response.lower()
         exact_match = [x["response"] for x in response_counts if x["response"] == normalized_resp]
         for index, data in enumerate(response_counts):
@@ -91,15 +91,19 @@ class PollResponseSerializer(serializers.ModelSerializer):
                     "points": data["count"],
                     "position": index,
                     "response": current_resp,
+                    "attempt": game.attempts,
                 }
-        game = Game.objects.get(id=obj.game.id)
+        if side_effects:
+            game.attempts += 1
+            game.save()
         if game.attempts > 2:
             return {
                 "response": "GAME OVER",
 				"answers": response_counts,
+                "attempts": game.attempts,
             }
             raise serializers.ValidationError("GAME OVER")
-        return {"points": 0, "position": -1, "response": normalized_resp}
+        return {"points": 0, "position": -1, "response": normalized_resp, "attempts": game.attempts }
 
     class Meta:
         model = PollResponse

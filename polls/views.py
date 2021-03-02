@@ -10,6 +10,8 @@ class CreateGame(generics.CreateAPIView):
     serializer_class = GameSerializer
     permission_classes = []
 
+    def get_serializer_context(self):
+        return self.request.data
 
 class CreatePollResponse(generics.CreateAPIView):
     serializer_class = PollResponseSerializer

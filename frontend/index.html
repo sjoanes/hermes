@@ -184,17 +184,27 @@
 	</div>
 <script>
 let game = {}
-const polls = [] 
+let polls = [
+	'9c5b0fb0-e037-4dec-8bed-3bedb62bb879',
+	'27733ff6-5f4f-4268-9ea2-87869a80d505'
+] 
 
 startGame()
 
 function startGame() {
-	fetch('/polls/start/', { method: 'POST' })
+	fetch(`/polls/start/`, {
+			headers: { 'Content-Type': 'application/json' },
+			method: 'POST',
+			body: JSON.stringify({ poll_id: polls[0] }),
+	 })
 		.then(response => response.json())
 		.then(data => {
 			game = data
 			document.querySelector('#game').textContent = data.current_poll.description
 		})
+	if (polls.length > 1) {
+		polls.shift()
+    }
 }
 
 function nextGame() {
@@ -225,7 +235,11 @@ document.querySelector('#guess').onkeypress = function(e) {
 		.then(response => response.json())
 		.then(data => {
 			document.querySelector('#guess').value = ''
-            if (data["response"]  === 'GAME OVER' && !!data["result"]["answers"]) {
+           	var children = document.querySelector("#content-lives").children
+			for (var i = 0; i < data.result.attempts; i++) {
+				children[i].style.display = 'none'
+			}
+            if (data.result.response  === 'GAME OVER' && !!data["result"]["answers"]) {
 				document.querySelector('#guess').style.display = 'none'
 				document.querySelector('#nextgame').style.display = 'initial'
 				document.querySelector('#scoreboard').style.color = 'darkred:'
@@ -240,11 +254,7 @@ document.querySelector('#guess').onkeypress = function(e) {
 				return
 			}
 			if (data.result.points === 0) {
-            	var children = document.querySelector("#content-lives").children
-				for (var i = 0; i < data.attempts; i++) {
-					children[i].style.display = 'none'
-				}
-				return
+   				return
 			}
 			const { position, points, response } = data.result
 			document.querySelector('#scoreboard').children[position].textContent = `[${points}] ${response}` 
